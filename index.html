@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Resume Builder</title>
+    <style>
+        /* Fonts: Clean and professional */
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@500&display=swap');
+
+        /* Body: Light background */
+        body {
+            background: #f5f5f5;
+            font-family: 'Open Sans', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        /* Form Container: Card layout */
+        .form-container {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            box-sizing: border-box;
+        }
+
+        /* Sidebar: Step navigation */
+        .sidebar {
+            width: 200px;
+            padding: 20px;
+            border-right: 1px solid #e0e0e0;
+            background: #fafafa;
+            box-sizing: border-box;
+            display: block !important;
+        }
+        .sidebar h2 {
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            color: #005577;
+            margin: 0 0 15px;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar li {
+            font-size: 14px;
+            color: #666;
+            padding: 10px 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 4px;
+        }
+        .sidebar li.active {
+            color: #005577;
+            font-weight: 600;
+            background: #e6f0fa;
+        }
+        .sidebar li:hover {
+            color: #007bff;
+            background: #f0f4f8;
+        }
+
+        /* Main Form */
+        .main-form {
+            flex: 1;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1 {
+            font-family: 'Roboto', sans-serif;
+            color: #005577;
+            font-size: 22px;
+            text-align: center;
+            margin: 0 0 20px;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            background: #e0e0e0;
+            height: 6px;
+            border-radius: 3px;
+            margin-bottom: 15px;
+            display: block !important;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #005577;
+            height: 100%;
+            border-radius: 3px;
+            width: 12.5%; /* 8 steps */
+            transition: width 0.3s ease;
+        }
+
+        /* Form Steps */
+        .form-step {
+            display: none !important;
+        }
+        .form-step.active {
+            display: block !important;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, textarea, select {
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 14px;
+            color: #333;
+            width: 100%;
+            box-sizing: border-box;
+            display: block !important;
+        }
+        input[type="date"] {
+            cursor: pointer;
+            padding: 8px;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-color: #005577;
+            outline: none;
+            box-shadow: 0 0 3px rgba(0, 85, 119, 0.3);
+        }
+        input[type="radio"] {
+            width: auto;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+        input[type="radio"] + label {
+            display: inline;
+            font-family: 'Open Sans', sans-serif;
+            margin-right: 15px;
+        }
+
+        /* Template Options */
+        .template-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        .template-option {
+            text-align: center;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 10px;
+            transition: border-color 0.3s;
+            cursor: pointer;
+        }
+        .template-option:hover {
+            border-color: #005577;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .template-preview {
+            width: 100%;
+            height: 180px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            overflow: hidden;
+            background: #f8f9fa;
+        }
+        .template-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .template-option input:checked + label {
+            color: #005577;
+            font-weight: 600;
+        }
+
+        /* Dynamic Fields */
+        .add-more {
+            background: #e0e0e0;
+            border: none;
+            color: #005577;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+            display: inline-block !important;
+        }
+        .add-more:hover {
+            background: #d5d5d5;
+        }
+
+        /* Buttons */
+        button {
+            background: #005577;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin: 5px;
+            display: inline-block !important;
+        }
+        button.back {
+            background: #6c757d;
+        }
+        button:hover {
+            background: #003d55;
+        }
+        button.back:hover {
+            background: #5a6268;
+        }
+
+        /* Error Messages */
+        .error {
+            color: #d32f2f;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Resume Preview */
+        .resume-preview {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            display: none !important;
+        }
+        .resume-preview.active {
+            display: block !important;
+        }
+        .resume-preview h2 {
+            font-family: 'Roboto', sans-serif;
+            color: #005577;
+            font-size: 18px;
+            margin: 0 0 10px;
+        }
+        .resume-preview h3 {
+            font-family: 'Roboto', sans-serif;
+            color: #005577;
+            font-size: 16px;
+            margin: 10px 0 5px;
+        }
+        .resume-preview p, .resume-preview ul {
+            font-size: 14px;
+            color: #333;
+            margin: 5px 0;
+        }
+        .resume-preview ul {
+            padding-left: 20px;
+        }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            .form-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                padding: 15px;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .sidebar ul {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .main-form {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 20px;
+            }
+            button {
+                width: 100%;
+                margin: 5px 0;
+            }
+            .template-options {
+                grid-template-columns: 1fr;
+            }
+            .template-preview {
+                height: 150px;
+            }
+            input[type="date"] {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="sidebar">
+            <h2>Steps</h2>
+            <ul>
+                <li class="active" onclick="goToStep(0)">1. Template</li>
+                <li onclick="goToStep(1)">2. Header</li>
+                <li onclick="goToStep(2)">3. Contact</li>
+                <li onclick="goToStep(3)">4. Experience</li>
+                <li onclick="goToStep(4)">5. Education</li>
+                <li onclick="goToStep(5)">6. Skills</li>
+                <li onclick="goToStep(6)">7. Additional</li>
+                <li onclick="goToStep(7)">8. Summary</li>
+            </ul>
+        </div>
+        <div class="main-form">
+            <h1>Resume Builder</h1>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <form id="resume-form">
+                <!-- Step 1: Template -->
+                <div class="form-step active">
+                    <div class="form-group">
+                        <label>Select Template * (Choose a layout for your resume)</label>
+                        <div class="template-options">
+                            <div class="template-option">
+                                <div class="template-preview"><img src="https://picsum.photos/150/180?random=1" alt="Classic"></div>
+                                <input type="radio" id="template-classic" name="template" value="classic" required>
+                                <label for="template-classic">Classic</label>
+                            </div>
+                            <div class="template-option">
+                                <div class="template-preview"><img src="https://picsum.photos/150/180?random=2" alt="Modern"></div>
+                                <input type="radio" id="template-modern" name="template" value="modern">
+                                <label for="template-modern">Modern</label>
+                            </div>
+                            <div class="template-option">
+                                <div class="template-preview"><img src="https://picsum.photos/150/180?random=3" alt="Creative"></div>
+                                <input type="radio" id="template-creative" name="template" value="creative">
+                                <label for="template-creative">Creative</label>
+                            </div>
+                            <div class="template-option">
+                                <div class="template-preview"><img src="https://picsum.photos/150/180?random=4" alt="Executive"></div>
+                                <input type="radio" id="template-executive" name="template" value="executive">
+                                <label for="template-executive">Executive</label>
+                            </div>
+                            <div class="template-option">
+                                <div class="template-preview"><img src="https://picsum.photos/150/180?random=5" alt="Functional"></div>
+                                <input type="radio" id="template-functional" name="template" value="functional">
+                                <label for="template-functional">Functional</label>
+                            </div>
+                            <div class="template-option">
+                                <div class="template-preview"><img src="https://picsum.photos/150/180?random=6" alt="Minimalist"></div>
+                                <input type="radio" id="template-minimalist" name="template" value="minimalist">
+                                <label for="template-minimalist">Minimalist</label>
+                            </div>
+                            <div class="template-option">
+                                <div class="template-preview"><img src="https://picsum.photos/150/180?random=7" alt="Tech"></div>
+                                <input type="radio" id="template-tech" name="template" value="tech">
+                                <label for="template-tech">Tech</label>
+                            </div>
+                            <div class="template-option">
+                                <div class="template-preview"><img src="https://picsum.photos/150/180?random=8" alt="Academic"></div>
+                                <input type="radio" id="template-academic" name="template" value="academic">
+                                <label for="template-academic">Academic</label>
+                            </div>
+                            <div class="template-option">
+                                <div class="template-preview"><img src="https://picsum.photos/150/180?random=9" alt="Creative Pro"></div>
+                                <input type="radio" id="template-creative-pro" name="template" value="creative-pro">
+                                <label for="template-creative-pro">Creative Pro</label>
+                            </div>
+                            <div class="template-option">
+                                <div class="template-preview"><img src="https://picsum.photos/150/180?random=10" alt="Sales"></div>
+                                <input type="radio" id="template-sales" name="template" value="sales">
+                                <label for="template-sales">Sales</label>
+                            </div>
+                            <div class="template-option">
+                                <div class="template-preview"><img src="https://picsum.photos/150/180?random=11" alt="Marketing"></div>
+                                <input type="radio" id="template-marketing" name="template" value="marketing">
+                                <label for="template-marketing">Marketing</label>
+                            </div>
+                            <div class="template-option">
+                                <div class="template-preview"><img src="https://picsum.photos/150/180?random=12" alt="Engineering"></div>
+                                <input type="radio" id="template-engineering" name="template" value="engineering">
+                                <label for="template-engineering">Engineering</label>
+                            </div>
+                        </div>
+                        <div class="error">Please select a template</div>
+                    </div>
+                    <button type="button" onclick="nextStep(0)">Next</button>
+                </div>
+                <!-- Step 2: Resume Header -->
+                <div class="form-step">
+                    <div class="form-group">
+                        <label for="full-name">Full Name * (Your full name as it appears professionally)</label>
+                        <input type="text" id="full-name" required placeholder="(e.g., John Doe)">
+                        <div class="error">Please enter your name</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Professional Title * (Your job title or desired role)</label>
+                        <input type="text" id="title" required placeholder="(e.g., Software Engineer)">
+                        <div class="error">Please enter your title</div>
+                    </div>
+                    <button type="button" class="back" onclick="prevStep(1)">Back</button>
+                    <button type="button" onclick="nextStep(1)">Next</button>
+                </div>
+                <!-- Step 3: Contact -->
+                <div class="form-step">
+                    <div class="form-group">
+                        <label for="phone">Phone Number (Your contact number)</label>
+                        <input type="tel" id="phone" placeholder="(e.g., +91-98765-43210)">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address * (Your professional email)</label>
+                        <input type="email" id="email" required placeholder="(e.g., john.doe@example.com)">
+                        <div class="error">Please enter a valid email</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="linkedin">LinkedIn/Portfolio (Link to your profile or portfolio)</label>
+                        <input type="url" id="linkedin" placeholder="(e.g., https://linkedin.com/in/johndoe)">
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address (Your city or full address)</label>
+                        <input type="text" id="address" placeholder="(e.g., Mumbai, Maharashtra)">
+                    </div>
+                    <button type="button" class="back" onclick="prevStep(2)">Back</button>
+                    <button type="button" onclick="nextStep(2)">Next</button>
+                </div>
+                <!-- Step 4: Experience -->
+                <div class="form-step">
+                    <div id="experience-groups">
+                        <div class="experience-group">
+                            <div class="form-group">
+                                <label for="job-title-1">Job Title * (Your role in the company)</label>
+                                <input type="text" id="job-title-1" required placeholder="(e.g., Software Developer)">
+                                <div class="error">Please enter job title</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="company-1">Company * (Name of the organization)</label>
+                                <input type="text" id="company-1" required placeholder="(e.g., Tech Corp)">
+                                <div class="error">Please enter company</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="job-start-date-1">Start Date (When you began this role)</label>
+                                <input type="date" id="job-start-date-1" placeholder="(e.g., 2020-01)">
+                            </div>
+                            <div class="form-group">
+                                <label for="job-end-date-1">End Date (When you left or 'Present')</label>
+                                <input type="date" id="job-end-date-1" placeholder="(e.g., 2023-06 or Present)">
+                            </div>
+                            <div class="form-group">
+                                <label for="job-desc-1">Description (Key responsibilities and achievements)</label>
+                                <textarea id="job-desc-1" placeholder="(e.g., Developed web applications using JavaScript and React)"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="add-more" onclick="addExperience()">Add Another Experience</button>
+                    <button type="button" class="back" onclick="prevStep(3)">Back</button>
+                    <button type="button" onclick="nextStep(3)">Next</button>
+                </div>
+                <!-- Step 5: Education -->
+                <div class="form-step">
+                    <div id="education-groups">
+                        <div class="education-group">
+                            <div class="form-group">
+                                <label for="degree-1">Degree * (Your academic qualification)</label>
+                                <input type="text" id="degree-1" required placeholder="(e.g., B.Tech in Computer Science)">
+                                <div class="error">Please enter degree</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="institution-1">Institution * (Name of the university or college)</label>
+                                <input type="text" id="institution-1" required placeholder="(e.g., IIT Mumbai)">
+                                <div class="error">Please enter institution</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="grad-year-1">Graduation Date (When you graduated)</label>
+                                <input type="date" id="grad-year-1" placeholder="(e.g., 2020-05)">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="add-more" onclick="addEducation()">Add Another Education</button>
+                    <button type="button" class="back" onclick="prevStep(4)">Back</button>
+                    <button type="button" onclick="nextStep(4)">Next</button>
+                </div>
+                <!-- Step 6: Skills -->
+                <div class="form-step">
+                    <div id="skills-groups">
+                        <div class="form-group">
+                            <label for="skill-1">Skill * (Technical or soft skills)</label>
+                            <input type="text" id="skill-1" required placeholder="(e.g., JavaScript, Python, Leadership, Communication)">
+                            <div class="error">Please enter a skill</div>
+                        </div>
+                    </div>
+                    <button type="button" class="add-more" onclick="addSkill()">Add Another Skill</button>
+                    <button type="button" class="back" onclick="prevStep(5)">Back</button>
+                    <button type="button" onclick="nextStep(5)">Next</button>
+                </div>
+                <!-- Step 7: Additional Sections -->
+                <div class="form-step">
+                    <div class="form-group">
+                        <label for="extra-section">Add Sections? (Optional sections for your resume)</label>
+                        <select id="extra-section" onchange="showExtra(this)">
+                            <option value="none">None</option>
+                            <option value="languages">Languages</option>
+                            <option value="certifications">Certifications</option>
+                            <option value="references">References</option>
+                        </select>
+                    </div>
+                    <div id="languages" style="display: none;">
+                        <div id="lang-groups">
+                            <div class="form-group">
+                                <label for="language-1">Language (Language and proficiency level)</label>
+                                <input type="text" id="language-1" placeholder="(e.g., Hindi - Fluent, English - Advanced)">
+                            </div>
+                        </div>
+                        <button type="button" class="add-more" onclick="addLang()">Add Another Language</button>
+                    </div>
+                    <div id="certifications" style="display: none;">
+                        <div id="cert-groups">
+                            <div class="form-group">
+                                <label for="cert-name-1">Certification Name (Your earned certification)</label>
+                                <input type="text" id="cert-name-1" placeholder="(e.g., AWS Certified Developer)">
+                            </div>
+                            <div class="form-group">
+                                <label for="cert-date-1">Date Earned (When you received it)</label>
+                                <input type="date" id="cert-date-1" placeholder="(e.g., 2022-03)">
+                            </div>
+                        </div>
+                        <button type="button" class="add-more" onclick="addCert()">Add Another Certification</button>
+                    </div>
+                    <div id="references" style="display: none;">
+                        <div id="ref-groups">
+                            <div class="form-group">
+                                <label for="ref-name-1">Reference Name (Professional reference)</label>
+                                <input type="text" id="ref-name-1" placeholder="(e.g., Priya Sharma)">
+                            </div>
+                            <div class="form-group">
+                                <label for="ref-email-1">Reference Email (Their contact email)</label>
+                                <input type="email" id="ref-email-1" placeholder="(e.g., priya.sharma@example.com)">
+                            </div>
+                        </div>
+                        <button type="button" class="add-more" onclick="addRef()">Add Another Reference</button>
+                    </div>
+                    <button type="button" class="back" onclick="prevStep(6)">Back</button>
+                    <button type="button" onclick="nextStep(6)">Next</button>
+                </div>
+                <!-- Step 8: Summary -->
+                <div class="form-step">
+                    <div class="form-group">
+                        <label for="summary">Professional Summary * (Brief overview of your skills and experience)</label>
+                        <textarea id="summary" maxlength="500" required placeholder="(e.g., Experienced software engineer with 5 years in web development, skilled in JavaScript, React, and team leadership)"></textarea>
+                        <div class="error">Please enter a summary</div>
+                    </div>
+                    <button type="button" class="back" onclick="prevStep(7)">Back</button>
+                    <button type="submit">Generate Resume</button>
+                </div>
+            </form>
+            <div class="resume-preview" id="resume-preview"></div>
+        </div>
+    </div>
+    <script>
+        let currentStep = 0;
+        let experienceCount = 1;
+        let educationCount = 1;
+        let skillCount = 1;
+        let certCount = 1;
+        let langCount = 1;
+        let refCount = 1;
+        const steps = document.querySelectorAll('.form-step');
+        const sidebarLinks = document.querySelectorAll('.sidebar li');
+        const progressFill = document.querySelector('.progress-fill');
+
+        function goToStep(step) {
+            console.log('Going to step:', step); // Debug
+            if (step >= 0 && step < steps.length) {
+                steps[currentStep].classList.remove('active');
+                sidebarLinks[currentStep].classList.remove('active');
+                steps[step].classList.add('active');
+                sidebarLinks[step].classList.add('active');
+                currentStep = step;
+                progressFill.style.width = (currentStep + 1) * 12.5 + '%';
+            } else {
+                console.error('Invalid step:', step);
+            }
+        }
+
+        function nextStep(step) {
+            console.log('Next step from:', step); // Debug
+            const inputs = steps[step].querySelectorAll('input[required], textarea[required]');
+            let valid = true;
+            inputs.forEach(input => {
+                if (!input.value) {
+                    input.nextElementSibling.style.display = 'block';
+                    valid = false;
+                } else {
+                    input.nextElementSibling.style.display = 'none';
+                }
+            });
+            if (valid) {
+                goToStep(step + 1);
+            }
+        }
+
+        function prevStep(step) {
+            console.log('Previous step from:', step); // Debug
+            goToStep(step - 1);
+        }
+
+        function showExtra(select) {
+            document.getElementById('languages').style.display = 'none';
+            document.getElementById('certifications').style.display = 'none';
+            document.getElementById('references').style.display = 'none';
+            if (select.value !== 'none') {
+                document.getElementById(select.value).style.display = 'block';
+            }
+        }
+
+        function addExperience() {
+            experienceCount++;
+            const newGroup = document.createElement('div');
+            newGroup.classList.add('experience-group');
+            newGroup.innerHTML = `
+                <div class="form-group">
+                    <label for="job-title-${experienceCount}">Job Title * (Your role in the company)</label>
+                    <input type="text" id="job-title-${experienceCount}" required placeholder="(e.g., Senior Developer)">
+                    <div class="error">Please enter job title</div>
+                </div>
+                <div class="form-group">
+                    <label for="company-${experienceCount}">Company * (Name of the organization)</label>
+                    <input type="text" id="company-${experienceCount}" required placeholder="(e.g., Tech Corp)">
+                    <div class="error">Please enter company</div>
+                </div>
+                <div class="form-group">
+                    <label for="job-start-date-${experienceCount}">Start Date (When you began this role)</label>
+                    <input type="date" id="job-start-date-${experienceCount}" placeholder="(e.g., 2020-01)">
+                </div>
+                <div class="form-group">
+                    <label for="job-end-date-${experienceCount}">End Date (When you left or 'Present')</label>
+                    <input type="date" id="job-end-date-${experienceCount}" placeholder="(e.g., 2023-06 or Present)">
+                </div>
+                <div class="form-group">
+                    <label for="job-desc-${experienceCount}">Description (Key responsibilities and achievements)</label>
+                    <textarea id="job-desc-${experienceCount}" placeholder="(e.g., Developed web applications using JavaScript and React)"></textarea>
+                </div>
+            `;
+            document.getElementById('experience-groups').appendChild(newGroup);
+        }
+
+        function addEducation() {
+            educationCount++;
+            const newGroup = document.createElement('div');
+            newGroup.classList.add('education-group');
+            newGroup.innerHTML = `
+                <div class="form-group">
+                    <label for="degree-${educationCount}">Degree * (Your academic qualification)</label>
+                    <input type="text" id="degree-${educationCount}" required placeholder="(e.g., M.Tech in Computer Science)">
+                    <div class="error">Please enter degree</div>
+                </div>
+                <div class="form-group">
+                    <label for="institution-${educationCount}">Institution * (Name of the university or college)</label>
+                    <input type="text" id="institution-${educationCount}" required placeholder="(e.g., IIT Delhi)">
+                    <div class="error">Please enter institution</div>
+                </div>
+                <div class="form-group">
+                    <label for="grad-year-${educationCount}">Graduation Date (When you graduated)</label>
+                    <input type="date" id="grad-year-${educationCount}" placeholder="(e.g., 2020-05)">
+                </div>
+            `;
+            document.getElementById('education-groups').appendChild(newGroup);
+        }
+
+        function addSkill() {
+            skillCount++;
+            const newGroup = document.createElement('div');
+            newGroup.innerHTML = `
+                <div class="form-group">
+                    <label for="skill-${skillCount}">Skill * (Technical or soft skills)</label>
+                    <input type="text" id="skill-${skillCount}" required placeholder="(e.g., React, Project Management, Communication)">
+                    <div class="error">Please enter a skill</div>
+                </div>
+            `;
+            document.getElementById('skills-groups').appendChild(newGroup);
+        }
+
+        function addLang() {
+            langCount++;
+            const newGroup = document.createElement('div');
+            newGroup.innerHTML = `
+                <div class="form-group">
+                    <label for="language-${langCount}">Language (Language and proficiency level)</label>
+                    <input type="text" id="language-${langCount}" placeholder="(e.g., Tamil - Native, English - Advanced)">
+                </div>
+            `;
+            document.getElementById('lang-groups').appendChild(newGroup);
+        }
+
+        function addCert() {
+            certCount++;
+            const newGroup = document.createElement('div');
+            newGroup.innerHTML = `
+                <div class="form-group">
+                    <label for="cert-name-${certCount}">Certification Name (Your earned certification)</label>
+                    <input type="text" id="cert-name-${certCount}" placeholder="(e.g., PMP Certified)">
+                </div>
+                <div class="form-group">
+                    <label for="cert-date-${certCount}">Date Earned (When you received it)</label>
+                    <input type="date" id="cert-date-${certCount}" placeholder="(e.g., 2022-03)">
+                </div>
+            `;
+            document.getElementById('cert-groups').appendChild(newGroup);
+        }
+
+        function addRef() {
+            refCount++;
+            const newGroup = document.createElement('div');
+            newGroup.innerHTML = `
+                <div class="form-group">
+                    <label for="ref-name-${refCount}">Reference Name (Professional reference)</label>
+                    <input type="text" id="ref-name-${refCount}" placeholder="(e.g., Ankit Verma)">
+                </div>
+                <div class="form-group">
+                    <label for="ref-email-${refCount}">Reference Email (Their contact email)</label>
+                    <input type="email" id="ref-email-${refCount}" placeholder="(e.g., ankit.verma@example.com)">
+                </div>
+            `;
+            document.getElementById('ref-groups').appendChild(newGroup);
+        }
+
+        document.getElementById('resume-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Form submitted'); // Debug
+            const template = document.querySelector('input[name="template"]:checked').value;
+            const data = {
+                fullName: document.getElementById('full-name').value,
+                title: document.getElementById('title').value,
+                phone: document.getElementById('phone').value || 'N/A',
+                email: document.getElementById('email').value,
+                linkedin: document.getElementById('linkedin').value || 'N/A',
+                address: document.getElementById('address').value || 'N/A',
+                experiences: [],
+                educations: [],
+                skills: [],
+                languages: [],
+                certifications: [],
+                references: [],
+                summary: document.getElementById('summary').value
+            };
+
+            for (let i = 1; i <= experienceCount; i++) {
+                const jobTitle = document.getElementById(`job-title-${i}`);
+                if (jobTitle) {
+                    data.experiences.push({
+                        jobTitle: jobTitle.value,
+                        company: document.getElementById(`company-${i}`).value,
+                        startDate: document.getElementById(`job-start-date-${i}`).value || 'N/A',
+                        endDate: document.getElementById(`job-end-date-${i}`).value || 'N/A',
+                        desc: document.getElementById(`job-desc-${i}`).value || 'N/A'
+                    });
+                }
+            }
+            for (let i = 1; i <= educationCount; i++) {
+                const degree = document.getElementById(`degree-${i}`);
+                if (degree) {
+                    data.educations.push({
+                        degree: degree.value,
+                        institution: document.getElementById(`institution-${i}`).value,
+                        gradYear: document.getElementById(`grad-year-${i}`).value || 'N/A'
+                    });
+                }
+            }
+            for (let i = 1; i <= skillCount; i++) {
+                const skill = document.getElementById(`skill-${i}`);
+                if (skill && skill.value) {
+                    data.skills.push(skill.value);
+                }
+            }
+            if (document.getElementById('extra-section').value === 'languages') {
+                for (let i = 1; i <= langCount; i++) {
+                    const lang = document.getElementById(`language-${i}`);
+                    if (lang && lang.value) {
+                        data.languages.push(lang.value);
+                    }
+                }
+            }
+            if (document.getElementById('extra-section').value === 'certifications') {
+                for (let i = 1; i <= certCount; i++) {
+                    const certName = document.getElementById(`cert-name-${i}`);
+                    if (certName) {
+                        data.certifications.push({
+                            name: certName.value || 'N/A',
+                            date: document.getElementById(`cert-date-${i}`).value || 'N/A'
+                        });
+                    }
+                }
+            }
+            if (document.getElementById('extra-section').value === 'references') {
+                for (let i = 1; i <= refCount; i++) {
+                    const refName = document.getElementById(`ref-name-${i}`);
+                    if (refName) {
+                        data.references.push({
+                            name: refName.value || 'N/A',
+                            email: document.getElementById(`ref-email-${i}`).value || 'N/A'
+                        });
+                    }
+                }
+            }
+
+            let resumeHTML = '';
+            if (template === 'classic') {
+                resumeHTML = `
+                    <h2>${data.fullName}</h2>
+                    <p><strong>${data.title}</strong></p>
+                    <h3>Contact</h3>
+                    <p>Email: ${data.email}</p>
+                    <p>Phone: ${data.phone}</p>
+                    <p>LinkedIn: ${data.linkedin}</p>
+                    <p>Address: ${data.address}</p>
+                    <h3>Experience</h3>
+                    ${data.experiences.map(exp => `
+                        <p><strong>${exp.jobTitle}</strong> at ${exp.company}, ${exp.startDate} - ${exp.endDate}</p>
+                        <p>${exp.desc}</p>
+                    `).join('')}
+                    <h3>Education</h3>
+                    ${data.educations.map(edu => `
+                        <p>${edu.degree}, ${edu.institution}, ${edu.gradYear}</p>
+                    `).join('')}
+                    <h3>Skills</h3>
+                    <p>${data.skills.join(', ')}</p>
+                    <h3>Additional</h3>
+                    ${data.languages.length ? `<p>Languages: ${data.languages.join(', ')}</p>` : ''}
+                    ${data.certifications.length ? data.certifications.map(cert => `
+                        <p>Certification: ${cert.name}, ${cert.date}</p>
+                    `).join('') : ''}
+                    ${data.references.length ? data.references.map(ref => `
+                        <p>Reference: ${ref.name}, ${ref.email}</p>
+                    `).join('') : ''}
+                    <h3>Summary</h3>
+                    <p>${data.summary}</p>
+                `;
+            } else if (template === 'modern') {
+                resumeHTML = `
+                    <div style="text-align: center;">
+                        <h2>${data.fullName}</h2>
+                        <p><strong>${data.title}</strong></p>
+                    </div>
+                    <div style="display: flex; gap: 20px;">
+                        <div style="flex: 1;">
+                            <h3>Skills</h3>
+                            <p>${data.skills.join(', ')}</p>
+                            <h3>Additional</h3>
+                            ${data.languages.length ? `<p>Languages: ${data.languages.join(', ')}</p>` : ''}
+                            ${data.certifications.length ? data.certifications.map(cert => `
+                                <p>Certification: ${cert.name}, ${cert.date}</p>
+                            `).join('') : ''}
+                            ${data.references.length ? data.references.map(ref => `
+                                <p>Reference: ${ref.name}, ${ref.email}</p>
+                            `).join('') : ''}
+                        </div>
+                        <div style="flex: 1;">
+                            <h3>Experience</h3>
+                            ${data.experiences.map(exp => `
+                                <p><strong>${exp.jobTitle}</strong> at ${exp.company}, ${exp.startDate} - ${exp.endDate}</p>
+                                <p>${exp.desc}</p>
+                            `).join('')}
+                            <h3>Education</h3>
+                            ${data.educations.map(edu => `
+                                <p>${edu.degree}, ${edu.institution}, ${edu.gradYear}</p>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <h3>Contact</h3>
+                    <p>Email: ${data.email} | Phone: ${data.phone} | LinkedIn: ${data.linkedin} | Address: ${data.address}</p>
+                    <h3>Summary</h3>
+                    <p>${data.summary}</p>
+                `;
+            } else if (template === 'creative') {
+                resumeHTML = `
+                    <h2 style="color: #005577;">${data.fullName}</h2>
+                    <p style="color: #6c757d;">${data.title}</p>
+                    <h3 style="color: #005577;">Contact</h3>
+                    <ul>
+                        <li>Email: ${data.email}</li>
+                        <li>Phone: ${data.phone}</li>
+                        <li>LinkedIn: ${data.linkedin}</li>
+                        <li>Address: ${data.address}</li>
+                    </ul>
+                    <h3 style="color: #005577;">Experience</h3>
+                    ${data.experiences.map(exp => `
+                        <p><strong>${exp.jobTitle}</strong> at ${exp.company}, ${exp.startDate} - ${exp.endDate}</p>
+                        <p>${exp.desc}</p>
+                    `).join('')}
+                    <h3 style="color: #005577;">Education</h3>
+                    ${data.educations.map(edu => `
+                        <p><strong>${edu.degree}</strong>, ${edu.institution}, ${edu.gradYear}</p>
+                    `).join('')}
+                    <h3 style="color: #005577;">Skills</h3>
+                    <p>${data.skills.join(', ')}</p>
+                    <h3 style="color: #005577;">Additional</h3>
+                    ${data.languages.length ? `<p>Languages: ${data.languages.join(', ')}</p>` : ''}
+                    ${data.certifications.length ? data.certifications.map(cert => `
+                        <p>Certification: ${cert.name}, ${cert.date}</p>
+                    `).join('') : ''}
+                    ${data.references.length ? data.references.map(ref => `
+                        <p>Reference: ${ref.name}, ${ref.email}</p>
+                    `).join('') : ''}
+                    <h3 style="color: #005577;">Summary</h3>
+                    <p>${data.summary}</p>
+                `;
+            } else {
+                resumeHTML = `
+                    <h2>${data.fullName}</h2>
+                    <p><strong>${data.title}</strong></p>
+                    <h3>Contact</h3>
+                    <p>Email: ${data.email}</p>
+                    <p>Phone: ${data.phone}</p>
+                    <p>LinkedIn: ${data.linkedin}</p>
+                    <p>Address: ${data.address}</p>
+                    <h3>Experience</h3>
+                    ${data.experiences.map(exp => `
+                        <p><strong>${exp.jobTitle}</strong> at ${exp.company}, ${exp.startDate} - ${exp.endDate}</p>
+                        <p>${exp.desc}</p>
+                    `).join('')}
+                    <h3>Education</h3>
+                    ${data.educations.map(edu => `
+                        <p>${edu.degree}, ${edu.institution}, ${edu.gradYear}</p>
+                    `).join('')}
+                    <h3>Skills</h3>
+                    <p>${data.skills.join(', ')}</p>
+                    <h3>Additional</h3>
+                    ${data.languages.length ? `<p>Languages: ${data.languages.join(', ')}</p>` : ''}
+                    ${data.certifications.length ? data.certifications.map(cert => `
+                        <p>Certification: ${cert.name}, ${cert.date}</p>
+                    `).join('') : ''}
+                    ${data.references.length ? data.references.map(ref => `
+                        <p>Reference: ${ref.name}, ${ref.email}</p>
+                    `).join('') : ''}
+                    <h3>Summary</h3>
+                    <p>${data.summary}</p>
+                `;
+            }
+
+            const preview = document.getElementById('resume-preview');
+            preview.innerHTML = resumeHTML;
+            preview.classList.add('active');
+            alert('Resume generated! Scroll down to preview. Use Ctrl+P to print as PDF or check Google Sheets for data.');
+        });
+    </script>
+</body>
+</html>
